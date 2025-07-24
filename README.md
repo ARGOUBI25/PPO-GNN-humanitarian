@@ -44,4 +44,35 @@ PPO-GNN-humanitarian/
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
----
+## Installation
+
+This project requires Python 3.7+ and the following libraries:
+
+- geopandas
+- shapely
+- networkx
+- pandas
+- numpy
+- matplotlib
+- torch
+- torch_geometric
+- stable-baselines3
+- geopy
+- scipy
+
+Install dependencies via conda and pip:
+
+```bash
+conda install geopandas shapely networkx pandas numpy matplotlib scipy geopy -c conda-forge
+pip install torch torch_geometric stable-baselines3
+
+## Usage
+Run full experimental pipeline
+python afg_pipeline.py [small|medium|large]
+Runs data preparation, model training (PPO and PPO-GNN), heuristic evaluation, and result aggregation for the selected scale.
+
+Visualize routes on map
+python plot_routes_on_map.py data/proc/afg_graph_large.pkl data/raw/afg_osm_lines_shp/afg_roads_lines.shp results/routes/routes_ppo_gnn_seed42.pkl
+Visualizes the routes output by the model overlaid on the Afghanistan road network.
+
+
