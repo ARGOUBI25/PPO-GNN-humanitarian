@@ -83,14 +83,13 @@ conda install geopandas shapely networkx pandas numpy matplotlib scipy geopy -c 
 pip install torch torch_geometric stable-baselines3
 
 ## Usage
-Run full experimental pipeline  
+- Run full experimental pipeline  
 
 python afg_pipeline.py [small|medium|large]  
 
 Runs data preparation, model training (PPO and PPO-GNN), heuristic evaluation, and result aggregation for the selected scale.  
 
-
-Visualize routes on map  
+- Visualize routes on map  
 
 python plot_routes_on_map.py data/proc/afg_graph_large.pkl data/raw/afg_osm_lines_shp/afg_roads_lines.shp results/routes/routes_ppo_gnn_seed42.pkl  
 
