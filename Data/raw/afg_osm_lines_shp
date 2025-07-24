@@ -1,0 +1,13 @@
+# Afghanistan Road Shapefiles Data
+
+This folder contains spatial road network shapefiles used in the PPO-GNN-humanitarian project.
+
+Due to file size limitations on GitHub, the actual shapefiles are not included here.
+
+You can download the complete folder from the following Google Drive link:
+
+https://drive.google.com/your-link-here
+
+After downloading, please extract and place the folder contents inside `data/raw/afg_osm_lines_shp/`  
+to ensure the project scripts can access the required data.
+
