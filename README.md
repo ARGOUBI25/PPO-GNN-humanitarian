@@ -13,15 +13,25 @@ The repository includes:
 
 ## Repository Structure
 PPO-GNN-humanitarian/
+
 ├── data/
-│ ├── proc/ # Processed datasets (graph pickles, preprocessed files)
-│ └── raw/ # Raw data files (road shapefiles, conflict events, demand CSVs)
-├── heuristic/ # Clarke-Wright heuristic implementation
-├── ppo_gnn/ # PPO and PPO-GNN environment and training code
-├── results/ # Logs, routes, figures, and tables generated after experiments
-├── afg_pipeline.py # Main experiment pipeline script
-├── plot_routes_on_map.py # Visualization script for route mapping on geographic data
-└── README.md # This documentation file
+│ ├── proc/ # Processed datasets (graph pickles for large, medium, small scales)
+│ └── raw/ # Raw data files: road shapefiles, conflict events, demand CSVs
+│ ├── afg_osm_lines_shp/
+│ ├── afg_demands15.csv
+│ ├── ged_afg.csv
+│ ├── GEDEvent_v23_1.csv
+│ └── hotosm_afg_roads_lines.shp
+├── heuristic/ # Clarke-Wright heuristic implementation (clarke_wright.py)
+├── ppo_gnn/ # PPO and PPO-GNN environment and training code (train.py, env.py)
+├── results/ # Output directory for logs, routes, figures, and summary tables
+│ ├── logs/
+│ ├── routes/
+│ ├── figures/
+│ └── tables/
+├── afg_pipeline.py # Main pipeline script to run experiments end-to-end
+├── plot_routes_on_map.py # Script to visualize routes on Afghanistan geographic maps
+└── README.md # Project documentation and instructions
 
 ## Getting Started
 
