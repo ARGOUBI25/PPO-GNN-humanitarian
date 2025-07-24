@@ -14,24 +14,41 @@ The repository includes:
 ## Repository Structure
 PPO-GNN-humanitarian/
 
-├── data/
-│ ├── proc/ # Processed datasets (graph pickles for large, medium, small scales)
-│ └── raw/ # Raw data files: road shapefiles, conflict events, demand CSVs
-│ ├── afg_osm_lines_shp/
-│ ├── afg_demands15.csv
-│ ├── ged_afg.csv
-│ ├── GEDEvent_v23_1.csv
-│ └── hotosm_afg_roads_lines.shp
-├── heuristic/ # Clarke-Wright heuristic implementation (clarke_wright.py)
-├── ppo_gnn/ # PPO and PPO-GNN environment and training code (train.py, env.py)
-├── results/ # Output directory for logs, routes, figures, and summary tables
-│ ├── logs/
-│ ├── routes/
-│ ├── figures/
-│ └── tables/
-├── afg_pipeline.py # Main pipeline script to run experiments end-to-end
-├── plot_routes_on_map.py # Script to visualize routes on Afghanistan geographic maps
-└── README.md # Project documentation and instructions
+├── data/  
+
+│ ├── proc/ # Processed datasets (graph pickles for large, medium, small scales)  
+
+│ └── raw/ # Raw data files: road shapefiles, conflict events, demand CSVs  
+
+│ ├── afg_osm_lines_shp/  
+
+│ ├── afg_demands15.csv  
+
+│ ├── ged_afg.csv  
+
+│ ├── GEDEvent_v23_1.csv  
+
+│ └── hotosm_afg_roads_lines.shp  
+
+├── heuristic/ # Clarke-Wright heuristic implementation (clarke_wright.py)  
+
+├── ppo_gnn/ # PPO and PPO-GNN environment and training code (train.py, env.py)  
+
+├── results/ # Output directory for logs, routes, figures, and summary tables  
+
+│ ├── logs/  
+
+│ ├── routes/  
+
+│ ├── figures/  
+
+│ └── tables/  
+
+├── afg_pipeline.py # Main pipeline script to run experiments end-to-end  
+
+├── plot_routes_on_map.py # Script to visualize routes on Afghanistan geographic maps  
+
+└── README.md # Project documentation and instructions  
 
 ## Getting Started
 
@@ -66,12 +83,17 @@ conda install geopandas shapely networkx pandas numpy matplotlib scipy geopy -c 
 pip install torch torch_geometric stable-baselines3
 
 ## Usage
-Run full experimental pipeline
-python afg_pipeline.py [small|medium|large]
-Runs data preparation, model training (PPO and PPO-GNN), heuristic evaluation, and result aggregation for the selected scale.
+Run full experimental pipeline  
 
-Visualize routes on map
-python plot_routes_on_map.py data/proc/afg_graph_large.pkl data/raw/afg_osm_lines_shp/afg_roads_lines.shp results/routes/routes_ppo_gnn_seed42.pkl
+python afg_pipeline.py [small|medium|large]  
+
+Runs data preparation, model training (PPO and PPO-GNN), heuristic evaluation, and result aggregation for the selected scale.  
+
+
+Visualize routes on map  
+
+python plot_routes_on_map.py data/proc/afg_graph_large.pkl data/raw/afg_osm_lines_shp/afg_roads_lines.shp results/routes/routes_ppo_gnn_seed42.pkl  
+
 Visualizes the routes output by the model overlaid on the Afghanistan road network.
 
 
