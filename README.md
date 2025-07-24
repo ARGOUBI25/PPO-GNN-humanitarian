@@ -62,7 +62,6 @@ This project requires Python 3.7+ and the following libraries:
 
 Install dependencies via conda and pip:
 
-```bash
 conda install geopandas shapely networkx pandas numpy matplotlib scipy geopy -c conda-forge
 pip install torch torch_geometric stable-baselines3
 
