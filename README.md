@@ -95,4 +95,6 @@ python plot_routes_on_map.py data/proc/afg_graph_large.pkl data/raw/afg_osm_line
 
 Visualizes the routes output by the model overlaid on the Afghanistan road network.
 
+## Contact
+For questions or support, please contact mejdiargoubi@yahoo.fr
 
