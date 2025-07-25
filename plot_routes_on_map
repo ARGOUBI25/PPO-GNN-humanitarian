@@ -1,0 +1,156 @@
+import pathlib
+import pickle
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import networkx as nx
+from shapely.geometry import Point
+from collections import Counter
+
+def analyze_and_plot_routes(graph_pkl_path, map_shapefile_path, routes_pkl_path):
+    # Charger les données
+    map_gdf = gpd.read_file(map_shapefile_path).to_crs(epsg=4326)
+
+    with open(graph_pkl_path, "rb") as f:
+        G = pickle.load(f)
+    with open(routes_pkl_path, "rb") as f:
+        all_routes = pickle.load(f)
+
+    nodes = list(G.nodes())
+
+    print(f"=== ANALYSE DÉTAILLÉE DES ROUTES ===")
+    print(f"Nombre de routes: {len(all_routes)}")
+    print(f"Nombre de noeuds: {len(nodes)}")
+
+    # Analyser chaque route
+    for i, route in enumerate(all_routes):
+        print(f"\n--- Route {i} ---")
+        print(f"Longueur: {len(route)} noeuds")
+        node_counts = Counter(route)
+        unique_nodes = len(node_counts)
+        most_common = node_counts.most_common(3)
+        print(f"Noeuds uniques: {unique_nodes}")
+        print(f"Noeuds les plus fréquents: {most_common}")
+        movements = []
+        current_pos = None
+        for node_idx in route:
+            if current_pos != node_idx:
+                if current_pos is not None:
+                    movements.append((current_pos, node_idx))
+                current_pos = node_idx
+        print(f"Segments de mouvement réel: {len(movements)}")
+        if movements:
+            print(f"Premiers mouvements: {movements[:5]}")
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
+
+    # 1. Fond de carte
+    map_gdf.plot(ax=ax1, color="lightgray", edgecolor="black", alpha=0.7, zorder=0)
+    map_gdf.plot(ax=ax2, color="lightgray", edgecolor="black", alpha=0.7, zorder=0)
+
+    # 2. Couleurs des routes
+    colors = ['blue', 'green', 'orange', 'purple', 'brown', 'black', 'magenta', 'cyan', 'gold', 'deeppink']
+
+    # 3. Tracer les routes d'abord
+    movement_count = 0
+    for route_idx, route in enumerate(all_routes):
+        color = colors[route_idx % len(colors)]
+        # Extraire les mouvements uniques
+        real_path = []
+        prev_node = None
+        for node in route:
+            if prev_node is None or node != prev_node:
+                real_path.append(node)
+                prev_node = node
+        if len(real_path) >= 2:
+            xs = [pt[0] for pt in real_path]
+            ys = [pt[1] for pt in real_path]
+            ax1.plot(xs, ys, color=color, linewidth=3, alpha=0.7, label=f'Route {route_idx}', zorder=2)
+            ax2.plot(xs, ys, color=color, linewidth=4, alpha=0.8, label=f'Route {route_idx} ({len(real_path)} étapes)', zorder=2)
+            # Points de départ/arrivée
+            ax2.plot(xs[0], ys[0], 'o', color=color, markersize=12, markeredgecolor='white', markeredgewidth=2, zorder=3)
+            ax2.plot(xs[-1], ys[-1], 's', color=color, markersize=12, markeredgecolor='white', markeredgewidth=2, zorder=3)
+            # Numéroter les étapes
+            for j, (x, y) in enumerate(zip(xs, ys)):
+                ax2.annotate(f'{j}', (x, y), xytext=(5, 5), textcoords='offset points', fontsize=8,
+                             bbox=dict(boxstyle='round,pad=0.2', facecolor=color, alpha=0.7))
+            movement_count += 1
+            print(f"Route {route_idx} - Chemin réel: {real_path}")
+        else:
+            print(f"Route {route_idx} - Aucun mouvement détecté")
+
+    # 4. Points rouges des centres (par-dessus)
+    lons = [coord[0] for coord in nodes]
+    lats = [coord[1] for coord in nodes]
+    points = gpd.GeoDataFrame(
+        geometry=[Point(lon, lat) for lon, lat in zip(lons, lats)],
+        crs="EPSG:4326"
+    )
+    points.plot(ax=ax1, color="red", markersize=50, alpha=0.6, label="Tous les centres", zorder=5)
+    points.plot(ax=ax2, color="red", markersize=50, alpha=0.6, label="Tous les centres", zorder=5)
+
+    # 5. Ajuster le zoom si on a au moins une route réelle
+    if movement_count > 0:
+        # Regrouper tous les points utilisés dans les routes
+        all_x = []
+        all_y = []
+        for route in all_routes:
+            xs = [pt[0] for pt in route]
+            ys = [pt[1] for pt in route]
+            all_x.extend(xs)
+            all_y.extend(ys)
+        margin = 0.01
+        ax1.set_xlim(min(all_x) - margin, max(all_x) + margin)
+        ax1.set_ylim(min(all_y) - margin, max(all_y) + margin)
+        ax2.set_xlim(min(all_x) - margin, max(all_x) + margin)
+        ax2.set_ylim(min(all_y) - margin, max(all_y) + margin)
+
+    ax1.set_title("Vue d'ensemble - Tous les centres et routes Clarke-Wright")
+    ax2.set_title(f"Mouvements réels détectés ({movement_count} routes actives)")
+
+    # Nettoyage des légendes (éviter doublons)
+    handles1, labels1 = ax1.get_legend_handles_labels()
+    by_label1 = dict(zip(labels1, handles1))
+    ax1.legend(by_label1.values(), by_label1.keys(), bbox_to_anchor=(1.05, 1), loc='upper left')
+    handles2, labels2 = ax2.get_legend_handles_labels()
+    by_label2 = dict(zip(labels2, handles2))
+    ax2.legend(by_label2.values(), by_label2.keys(), bbox_to_anchor=(1.05, 1), loc='upper left')
+
+    ax1.grid(True, alpha=0.3)
+    ax2.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.show()
+
+    # Recommandations
+    print(f"\n=== RECOMMANDATIONS ===")
+    if movement_count == 0:
+        print("  Aucun mouvement réel détecté dans vos routes!")
+        print("   Vos routes semblent être des séquences de points statiques.")
+        print("   Vérifiez votre algorithme d'optimisation de routes.")
+    else:
+        print(f" {movement_count} routes avec mouvements détectés")
+        print("   Les routes sont visibles mais peuvent être très courtes.")
+
+    print(f"\n Suggestions d'amélioration:")
+    print(f"   - Vérifiez que votre algorithme génère des chemins entre différents noeuds")
+    print(f"   - La zone couvre seulement ~6km x 3km - considérez une zone plus large")
+    print(f"   - Utilisez un graphe avec plus de connexions entre les noeuds")
+
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) != 4:
+        print("Usage: python analyze_routes.py path_to_graph.pkl path_to_map.shp path_to_routes.pkl")
+        sys.exit(1)
+
+    graph_pkl = pathlib.Path(sys.argv[1])
+    map_shp = pathlib.Path(sys.argv[2])
+    routes_pkl = pathlib.Path(sys.argv[3])
+
+    for file_path in [graph_pkl, map_shp, routes_pkl]:
+        if not file_path.exists():
+            print(f"Erreur: fichier {file_path} introuvable.")
+            sys.exit(1)
+
+    analyze_and_plot_routes(graph_pkl, map_shp, routes_pkl)
