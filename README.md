@@ -14,7 +14,7 @@ The repository includes:
 ## Repository Structure
 PPO-GNN-humanitarian/
 
-├── data/
+├── data/  
 │   ├── proc/                   # Processed datasets (graph pickles for large, medium, small scales)
 │   └── raw/                    # Raw data files: road shapefiles, conflict events, demand CSVs
 │       ├── afg_osm_lines_shp/  # Folder containing Afghanistan road shapefiles
