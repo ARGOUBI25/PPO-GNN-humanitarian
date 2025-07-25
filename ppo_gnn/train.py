@@ -45,7 +45,6 @@ def safe_action(action):
 # ========== TRAINING PPO "REAL" (MLP) ==========
 
 def train_ppo_real(graph_path: str, seed: int, episodes: int = 5_000) -> dict:
-    """Entraîne un agent PPO classique (MLP) sur le VRP humanitaire"""
     with open(graph_path, "rb") as f:
         G = pickle.load(f)
 
@@ -53,16 +52,32 @@ def train_ppo_real(graph_path: str, seed: int, episodes: int = 5_000) -> dict:
 
     env = DummyVecEnv([lambda: HumanitarianVRPFixed(G, seed=seed)])
 
-    model = PPO("MlpPolicy", env,
-                learning_rate=3e-4,
-                n_steps=512,
-                batch_size=64,
-                n_epochs=4,
-                gamma=0.99,
-                gae_lambda=0.95,
-                clip_range=0.2,
-                seed=seed,
-                verbose=1)
+    # Extraire l'instance réelle d'env pour lire les coefficients
+    real_env = HumanitarianVRPFixed(G, seed=seed)
+    print("Training parameters from environment:")
+    print(f"  alpha (distance weight): {real_env.alpha}")
+    print(f"  beta (risk weight): {real_env.beta}")
+    print(f"  gamma (unmet demand weight): {real_env.gamma}")
+    print(f"  delta (capacity violation weight): {real_env.delta}")
+    print(f"  max steps per episode: {real_env.max_steps}")
+    print(f"  vehicle capacity: {real_env.capacity}")
+
+    model = PPO(
+        "MlpPolicy", env,
+        learning_rate=3e-4,
+        n_steps=512,
+        batch_size=64,
+        n_epochs=4,
+        gamma=0.99,
+        gae_lambda=0.95,
+        clip_range=0.2,
+        seed=seed,
+        verbose=1,
+    )
+
+    # Afficher nombre total de paramètres du modèle
+    total_params = sum(p.numel() for p in model.policy.parameters())
+    print(f"Model total number of parameters: {total_params}")
 
     t0 = time.perf_counter()
     model.learn(total_timesteps=episodes)
@@ -73,6 +88,7 @@ def train_ppo_real(graph_path: str, seed: int, episodes: int = 5_000) -> dict:
 
     print(f"PPO training completed in {elapsed:.1f}s")
     return metrics
+
 
 # ========== EXTRACTEUR GNN ==========
 
@@ -147,14 +163,17 @@ def train_ppo_gnn_real(graph_path: str, seed: int, episodes: int = 5_000) -> dic
     ei = torch.tensor(base_env.edge_index, dtype=torch.long)
     print(f"Graph structure: {ei.shape[1]} edges")
 
-    # Inférer nb_nodes, nb_features
-    obs = base_env.reset()[0]
-    nb_nodes = getattr(base_env, "nb_nodes", None) or getattr(base_env, "n_nodes", None)
-    if nb_nodes is None:
-        nb_nodes = G.number_of_nodes() if hasattr(G, "number_of_nodes") else 81
-    obs_shape = np.asarray(obs).shape
-    features_dim = 128
+    # Afficher les coefficients lambda (params de la fonction de récompense)
+    print("Training parameters from environment:")
+    print(f"  alpha (distance weight): {base_env.alpha}")
+    print(f"  beta (risk weight): {base_env.beta}")
+    print(f"  gamma (unmet demand weight): {base_env.gamma}")
+    print(f"  delta (capacity violation weight): {base_env.delta}")
+    print(f"  max steps per episode: {base_env.max_steps}")
+    print(f"  vehicle capacity: {base_env.capacity}")
 
+    # Configuration de la politique avec extracteur GCN
+    features_dim = 128
     policy_kwargs = dict(
         features_extractor_class=GCNExtractor,
         features_extractor_kwargs=dict(
@@ -174,6 +193,10 @@ def train_ppo_gnn_real(graph_path: str, seed: int, episodes: int = 5_000) -> dic
                 seed=seed,
                 verbose=1)
 
+    # Calculer et afficher le nombre total de paramètres du modèle
+    total_params = sum(p.numel() for p in model.policy.parameters())
+    print(f"Model total number of parameters: {total_params}")
+
     t0 = time.perf_counter()
     model.learn(total_timesteps=episodes)
     elapsed = time.perf_counter() - t0
@@ -183,6 +206,7 @@ def train_ppo_gnn_real(graph_path: str, seed: int, episodes: int = 5_000) -> dic
 
     print(f"PPO-GNN training completed in {elapsed:.1f}s")
     return metrics
+
 
 # ========== EVALUATION POLITIQUE ==========
 
