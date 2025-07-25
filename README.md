@@ -14,41 +14,31 @@ The repository includes:
 ## Repository Structure
 PPO-GNN-humanitarian/
 
-├── data/  
-
-│ ├── proc/ # Processed datasets (graph pickles for large, medium, small scales)  
-
-│ └── raw/ # Raw data files: road shapefiles, conflict events, demand CSVs  
-
-│ ├── afg_osm_lines_shp/  
-
-│ ├── afg_demands15.csv  
-
-│ ├── ged_afg.csv  
-
-│ ├── GEDEvent_v23_1.csv  
-
-│ └── hotosm_afg_roads_lines.shp  
-
-├── heuristic/ # Clarke-Wright heuristic implementation (clarke_wright.py)  
-
-├── ppo_gnn/ # PPO and PPO-GNN environment and training code (train.py, env.py)  
-
-├── results/ # Output directory for logs, routes, figures, and summary tables  
-
-│ ├── logs/  
-
-│ ├── routes/  
-
-│ ├── figures/  
-
-│ └── tables/  
-
-├── afg_pipeline.py # Main pipeline script to run experiments end-to-end  
-
-├── plot_routes_on_map.py # Script to visualize routes on Afghanistan geographic maps  
-
-└── README.md # Project documentation and instructions  
+├── data/
+│   ├── proc/                   # Processed datasets (graph pickles for large, medium, small scales)
+│   └── raw/                    # Raw data files: road shapefiles, conflict events, demand CSVs
+│       ├── afg_osm_lines_shp/  # Folder containing Afghanistan road shapefiles
+│       ├── afg_demands15.csv   # Humanitarian aid demand data per node
+│       ├── ged_afg.csv         # Conflict event dataset (processed)
+│       ├── GEDEvent_v23_1.csv  # Original UCDP GED conflict events dataset
+│       └── hotosm_afg_roads_lines.shp  # Road network shapefile from OpenStreetMap
+│
+├── heuristic/                  # Clarke-Wright heuristic implementation
+│   └── clarke_wright.py        # Heuristic algorithm script
+│
+├── ppo_gnn/                    # PPO and PPO-GNN environment and training code
+│   ├── train.py                # Training routines for PPO and PPO-GNN agents
+│   └── env.py                  # OpenAI Gym environment implementation for the VRP
+│
+├── results/                    # Output directory for experiment results
+│   ├── logs/                   # Training and evaluation log files
+│   ├── routes/                 # Saved route sequences (pickle files)
+│   ├── figures/                # Generated figures and plots
+│   └── tables/                 # Summary tables with aggregated metrics
+│
+├── afg_pipeline.py             # Main pipeline script to run the full experiments end-to-end
+├── plot_routes_on_map.py       # Visualization script to map routes on Afghanistan geographic data
+└── README.md                   # Project documentation and instructions 
 
 ## Getting Started
 
