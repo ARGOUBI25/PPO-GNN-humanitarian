@@ -29,13 +29,7 @@ PPO-GNN-humanitarian/
 ├── ppo_gnn/                    # PPO and PPO-GNN environment and training code  
 │   ├── train.py                # Training routines for PPO and PPO-GNN agents  
 │   └── env.py                  # OpenAI Gym environment implementation for the VRP  
-│  
-├── results/                    # Output directory for experiment results  
-│   ├── logs/                   # Training and evaluation log files  
-│   ├── routes/                 # Saved route sequences (pickle files)  
-│   ├── figures/                # Generated figures and plots  
-│   └── tables/                 # Summary tables with aggregated metrics  
-│  
+│    
 ├── afg_pipeline.py             # Main pipeline script to run the full experiments end-to-end  
 ├── plot_routes_on_map.py       # Visualization script to map routes on Afghanistan geographic data  
 └── README.md                   # Project documentation and instructions   
