@@ -73,9 +73,9 @@ python afg_pipeline.py [small|medium|large]
 
 Runs data preparation, model training (PPO and PPO-GNN), heuristic evaluation, and result aggregation for the selected scale.  
 
-- Visualize routes on map  
+- Visualize routes on map for example:
 
-python plot_routes_on_map.py data/proc/afg_graph_large.pkl data/raw/afg_osm_lines_shp/afg_roads_lines.shp results/routes/routes_ppo_gnn_seed42.pkl  
+python plot_routes_on_map.py data/proc/afg_graph_large.pkl data/raw/afg_osm_lines_shp/afg_roads_lines.shp results/routes/routes_cw_123.pkl  
 
 Visualizes the routes output by the model overlaid on the Afghanistan road network.
 
