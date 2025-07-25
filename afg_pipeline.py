@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 End-to-end Afghanistan pipeline – *real implementation template* with scale selection and connectivity validation.
 """
